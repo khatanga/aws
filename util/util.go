@@ -2,14 +2,8 @@ package util
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
-
-type Resource struct {
-	ResourceType string
-	ResourceID   *string
-}
 
 // create a tag with key and value provided
 // returns pointer to new tag
@@ -20,8 +14,8 @@ func CreateTag(k string, v string) *ec2.Tag {
 	}
 }
 
-func TagResource(s *session.Session, resourceId *string, tags ...*ec2.Tag) (*ec2.CreateTagsOutput, error) {
-	svc := ec2.New(s)
+func TagResource(resourceId *string, tags ...*ec2.Tag) (*ec2.CreateTagsOutput, error) {
+	svc := ec2.New(Session)
 	ids := []*string{
 		resourceId,
 	}

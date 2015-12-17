@@ -1,30 +1,30 @@
-package svc
+package ec2
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/margic/aws/util"
 )
 
 // Create VPC
-func CreateVPC(s *session.Session, r map[string]util.Resource) (err error) {
-	svc := ec2.New(s)
+func CreateVPC(r map[string]util.Resource) (err error) {
+	svc := ec2.New(util.Session)
 
 	vpcInput := ec2.CreateVpcInput{
+		DryRun:          aws.Bool(false),
 		CidrBlock:       aws.String("10.2.0.0/16"),
 		InstanceTenancy: aws.String("default"),
 	}
 
-	vpcOutut, err := svc.CreateVpc(&vpcInput)
+	vpcOutput, err := svc.CreateVpc(&vpcInput)
 	if err != nil {
 		return err
 	}
 
 	// tag the new vpc
-	vpcId := vpcOutut.Vpc.VpcId
+	vpcId := vpcOutput.Vpc.VpcId
 
-	_, err = util.TagResource(s, vpcId, util.CreateTag("Name", "KhatangaVPC"))
+	_, err = util.TagResource(vpcId, util.CreateTag("Name", "KhatangaVPC"))
 
 	// save the vpcId in the results map
 	r["vpcId"] = util.Resource{
@@ -35,8 +35,8 @@ func CreateVPC(s *session.Session, r map[string]util.Resource) (err error) {
 	return err
 }
 
-func CreateSubnets(s *session.Session, r map[string]util.Resource) error {
-	svc := ec2.New(s)
+func CreateSubnets(r map[string]util.Resource) error {
+	svc := ec2.New(util.Session)
 
 	publicSubnetInput := ec2.CreateSubnetInput{
 		AvailabilityZone: aws.String("us-west-2b"),
@@ -65,7 +65,7 @@ func CreateSubnets(s *session.Session, r map[string]util.Resource) error {
 		ResourceID:   subnetId,
 	}
 	// set the tags on the new public subnet
-	_, err = util.TagResource(s, subnetId, util.CreateTag("Name", "KhatangaPublic"))
+	_, err = util.TagResource(subnetId, util.CreateTag("Name", "KhatangaPublic"))
 
 	if err != nil {
 		return err
@@ -84,13 +84,13 @@ func CreateSubnets(s *session.Session, r map[string]util.Resource) error {
 		ResourceID:   subnetId,
 	}
 	// set the tags on the new public subnet
-	_, err = util.TagResource(s, subnetId, util.CreateTag("Name", "KhatangaPrivate"))
+	_, err = util.TagResource(subnetId, util.CreateTag("Name", "KhatangaPrivate"))
 
 	return err
 }
 
-func CreateInternetGateway(s *session.Session, r map[string]util.Resource) error {
-	svc := ec2.New(s)
+func CreateInternetGateway(r map[string]util.Resource) error {
+	svc := ec2.New(util.Session)
 
 	createGWInput := ec2.CreateInternetGatewayInput{
 		DryRun: aws.Bool(false),
@@ -104,7 +104,7 @@ func CreateInternetGateway(s *session.Session, r map[string]util.Resource) error
 		ResourceID:   gwId,
 	}
 	// set the tags on the internet gateway
-	_, err = util.TagResource(s, gwId, util.CreateTag("Name", "KhatangaGateway"))
+	_, err = util.TagResource(gwId, util.CreateTag("Name", "KhatangaGateway"))
 
 	if err != nil {
 		return err

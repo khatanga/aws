@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/margic/aws/svc"
+	//"github.com/aws/aws-sdk-go/awstesting/integration/smoke"
+	ec "github.com/margic/aws/ec2" // imported as ec as to avoid name collision with ec2
 	"github.com/margic/aws/util"
 )
 
@@ -16,17 +15,15 @@ func main() {
 	// for example ids of created vpc
 	results := make(map[string]util.Resource)
 
-	s := session.New(&aws.Config{Region: aws.String("us-west-2")})
-
-	err := svc.CreateVPC(s, results)
+	err := ec.CreateVPC(results)
 	if err != nil {
 		panic(err)
 	}
-	err = svc.CreateSubnets(s, results)
+	err = ec.CreateSubnets(results)
 	if err != nil {
 		panic(err)
 	}
-	err = svc.CreateInternetGateway(s, results)
+	err = ec.CreateInternetGateway(results)
 	if err != nil {
 		panic(err)
 	}
