@@ -19,6 +19,7 @@ func main() {
 
 	ctx := util.NewAwsContext(session)
 
+	// token for retry logic
 	ctx.IdempotentToken = token
 
 	err := ec.CreateVPC(&ctx)
