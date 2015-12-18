@@ -1,8 +1,9 @@
-package util
+package ec2
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/margic/aws/util"
 )
 
 // create a tag with key and value provided
@@ -14,8 +15,8 @@ func CreateTag(k string, v string) *ec2.Tag {
 	}
 }
 
-func TagResource(resourceId *string, tags ...*ec2.Tag) (*ec2.CreateTagsOutput, error) {
-	svc := ec2.New(Session)
+func TagResource(ctx *util.AwsContext, resourceId *string, tags ...*ec2.Tag) (*ec2.CreateTagsOutput, error) {
+	svc := ec2.New(ctx.AwsSession)
 	ids := []*string{
 		resourceId,
 	}

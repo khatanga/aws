@@ -1,12 +1,8 @@
 package unit
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/awstesting/integration/smoke"
+	"github.com/margic/aws/util"
 )
 
-// Session is a shared session for unit tests to use.
-var Session = session.New(aws.NewConfig().
-	WithCredentials(credentials.NewStaticCredentials("AKID", "SECRET", "SESSION")).
-	WithRegion("mock-region"))
+var Ctx = util.NewAwsContext(smoke.Session)

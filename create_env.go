@@ -1,34 +1,50 @@
 package main
 
 import (
-	"fmt"
-	//"github.com/aws/aws-sdk-go/awstesting/integration/smoke"
+	log "github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/gorilla/feeds"
 	ec "github.com/margic/aws/ec2" // imported as ec as to avoid name collision with ec2
 	"github.com/margic/aws/util"
 )
 
 // Creates aws environment for Khatanga project
 func main() {
-	fmt.Println("Starting AWS Client")
-
-	// create a map to store outputs and ids from func calls
+	log.Info("Starting AWS Client")
+	// create an awsContext that stores the session and results from function calls
 	// for example ids of created vpc
-	results := make(map[string]util.Resource)
+	session := session.New(&aws.Config{Region: aws.String("us-west-2")})
+	token := aws.String(feeds.NewUUID().String())
 
-	err := ec.CreateVPC(results)
+	ctx := util.NewAwsContext(session)
+
+	ctx.IdempotentToken = token
+
+	err := ec.CreateVPC(&ctx)
 	if err != nil {
 		panic(err)
 	}
-	err = ec.CreateSubnets(results)
+	err = ec.CreateSubnets(&ctx)
 	if err != nil {
 		panic(err)
 	}
-	err = ec.CreateInternetGateway(results)
+	err = ec.CreateInternetGateway(&ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(results)
+	err = ec.CreateNatEip(&ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ec.CreateNATGateway(&ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Info(ctx.Results)
 }
 
 /*
