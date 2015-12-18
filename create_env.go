@@ -5,8 +5,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/feeds"
-	ec "github.com/margic/aws/ec2" // imported as ec as to avoid name collision with ec2
-	"github.com/margic/aws/util"
+	ec "github.com/khatanga/aws/ec2" // imported as ec as to avoid name collision with ec2
+	"github.com/khatanga/aws/util"
 )
 
 // Creates aws environment for Khatanga project

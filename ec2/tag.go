@@ -3,7 +3,7 @@ package ec2
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/margic/aws/util"
+	"github.com/khatanga/aws/util"
 )
 
 // create a tag with key and value provided
