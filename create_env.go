@@ -15,19 +15,24 @@ import (
 // Creates aws environment for Khatanga project
 func main() {
 	log.Info("Starting AWS Client")
+	
+	//read config.json
+	util.Initialize()
 
-	var fAll = *flag.Bool("createAll", false, "Special flag to execute all create statements")
-	var fVpc = *flag.Bool("createVpc", false, "Create Virtual Private Cloud (VPC) for environment")
-	var fSubnets = *flag.Bool("createSubnets", false, "Create private and public Subnets in VPC")
-	var fInternetGw = *flag.Bool("createInternetGw", false, "Creates an internet gateway")
-	var fNatEip = *flag.Bool("createNatEip", false, "Creates an EIP for the Nat Gateway")
-	var fNatGw = *flag.Bool("createNatGw", false, "Creates the Nat Gateway. Will require a EIP")
+	var fAll, fVpc, fSubnets, fInternetGw, fNatEip, fNatGw bool
+	
+	flag.BoolVar(&fAll, "createAll", false, "Special flag to execute all create statements")
+	flag.BoolVar(&fVpc, "createVpc", false, "Create Virtual Private Cloud (VPC) for environment")
+	flag.BoolVar(&fSubnets, "createSubnets", false, "Create private and public Subnets in VPC")
+	flag.BoolVar(&fInternetGw, "createInternetGw", false, "Creates an internet gateway")
+	flag.BoolVar(&fNatEip, "createNatEip", false, "Creates an EIP for the Nat Gateway")
+	flag.BoolVar(&fNatGw, "createNatGw", false, "Creates the Nat Gateway. Will require a EIP")
 
 	flag.Parse()
 
 	// create an awsContext that stores the session and results from function calls
 	// for example ids of created vpc
-	session := session.New(&aws.Config{Region: aws.String("us-west-2")})
+	session := session.New(&aws.Config{Region: aws.String(util.Config.SessionRegion)})
 	token := aws.String(feeds.NewUUID().String())
 	ctx := util.NewAwsContext(session)
 	// token for retry logic
