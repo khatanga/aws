@@ -16,12 +16,15 @@ import (
 func main() {
 	log.Info("Starting AWS Client")
 
-	var fAll = *flag.Bool("createAll", false, "Special flag to execute all create statements")
-	var fVpc = *flag.Bool("createVpc", false, "Create Virtual Private Cloud (VPC) for environment")
-	var fSubnets = *flag.Bool("createSubnets", false, "Create private and public Subnets in VPC")
-	var fInternetGw = *flag.Bool("createInternetGw", false, "Creates an internet gateway")
-	var fNatEip = *flag.Bool("createNatEip", false, "Creates an EIP for the Nat Gateway")
-	var fNatGw = *flag.Bool("createNatGw", false, "Creates the Nat Gateway. Will require a EIP")
+	// set up all the command line flag variables
+	var fAll, fVpc, fSubnets, fInternetGw, fNatEip, fNatGw bool
+
+	flag.BoolVar(&fAll, "createAll", false, "Special flag to execute all create statements")
+	flag.BoolVar(&fVpc, "createVpc", false, "Create Virtual Private Cloud (VPC) for environment")
+	flag.BoolVar(&fSubnets, "createSubnets", false, "Create private and public Subnets in VPC")
+	flag.BoolVar(&fInternetGw, "createInternetGw", false, "Creates an internet gateway")
+	flag.BoolVar(&fNatEip, "createNatEip", false, "Creates an EIP for the Nat Gateway")
+	flag.BoolVar(&fNatGw, "createNatGw", false, "Creates the Nat Gateway. Will require a EIP")
 
 	flag.Parse()
 
