@@ -13,15 +13,15 @@ import (
 	"github.com/khatanga/aws/util"
 )
 
-//
+
 
 // Create VPC
 func CreateVPC(ctx *util.AwsContext) (err error) {
 	svc := ec2.New(ctx.AwsSession)
 	cVpcI := ec2.CreateVpcInput{
-		DryRun:          aws.Bool(false),
-		CidrBlock:       aws.String("10.2.0.0/16"),
-		InstanceTenancy: aws.String("default"),
+		DryRun:          aws.Bool(util.Config.Vpc.DryRun),
+		CidrBlock:       aws.String(util.Config.Vpc.CidrBlock),
+		InstanceTenancy: aws.String(util.Config.Vpc.InstanceTenancy),
 	}
 
 	log.Info("Creating vpc")
@@ -32,7 +32,7 @@ func CreateVPC(ctx *util.AwsContext) (err error) {
 
 	// tag the new vpc
 	vpcId := cVpcO.Vpc.VpcId
-	_, err = TagResource(ctx, vpcId, CreateTag("Name", "KhatangaVPC"))
+	_, err = TagResource(ctx, vpcId, CreateTag("Name", util.Config.Vpc.TagName))
 	// save the vpcId in the results map
 	ctx.AddResult("vpc", "vpc", vpcId)
 	return err
@@ -42,17 +42,17 @@ func CreateSubnets(ctx *util.AwsContext) error {
 	svc := ec2.New(ctx.AwsSession)
 
 	cPubSubnetI := ec2.CreateSubnetInput{
-		AvailabilityZone: aws.String("us-west-2b"),
-		CidrBlock:        aws.String("10.2.0.0/20"),
-		DryRun:           aws.Bool(false),
-		VpcId:            ctx.Results["vpc"].ResourceID,
+		AvailabilityZone: aws.String(util.Config.PubSubnet.AvailabilityZone),
+		CidrBlock:        aws.String(util.Config.PubSubnet.CidrBlock),
+		DryRun:           aws.Bool(util.Config.PubSubnet.DryRun),
+		VpcId:            ctx.Results[util.Config.PubSubnet.VpcId].ResourceID,
 	}
 
 	cPvtSubnetI := ec2.CreateSubnetInput{
-		AvailabilityZone: aws.String("us-west-2b"),
-		CidrBlock:        aws.String("10.2.16.0/20"),
-		DryRun:           aws.Bool(false),
-		VpcId:            ctx.Results["vpc"].ResourceID,
+		AvailabilityZone: aws.String(util.Config.PvtSubnet.AvailabilityZone),
+		CidrBlock:        aws.String(util.Config.PvtSubnet.CidrBlock),
+		DryRun:           aws.Bool(util.Config.PvtSubnet.DryRun),
+		VpcId:            ctx.Results[util.Config.PvtSubnet.VpcId].ResourceID,
 	}
 
 	// create public subnet
@@ -66,7 +66,7 @@ func CreateSubnets(ctx *util.AwsContext) error {
 	// save the subnet id in the results
 	ctx.AddResult("publicSubnet", "subnet", subnetId)
 	// set the tags on the new public subnet
-	_, err = TagResource(ctx, subnetId, CreateTag("Name", "KhatangaPublic"))
+	_, err = TagResource(ctx, subnetId, CreateTag("Name", util.Config.PubSubnet.TagName))
 
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ func CreateSubnets(ctx *util.AwsContext) error {
 	// save the subnet id in the results
 	ctx.AddResult("privateSubnet", "subnet", subnetId)
 	// set the tags on the new public subnet
-	_, err = TagResource(ctx, subnetId, CreateTag("Name", "KhatangaPrivate"))
+	_, err = TagResource(ctx, subnetId, CreateTag("Name", util.Config.PvtSubnet.TagName))
 	return err
 }
 
@@ -99,7 +99,7 @@ func CreateInternetGateway(ctx *util.AwsContext) error {
 	// save the internet gateway id
 	ctx.AddResult("gateway", "internetGateway", gwId)
 	// set the tags on the internet gateway
-	_, err = TagResource(ctx, gwId, CreateTag("Name", "KhatangaGateway"))
+	_, err = TagResource(ctx, gwId, CreateTag("Name", util.Config.InetGateway.Name))
 
 	if err != nil {
 		return err
@@ -149,9 +149,8 @@ func CreateNATGateway(ctx *util.AwsContext) error {
 	gwId := cNatGwO.NatGateway.NatGatewayId
 	ctx.AddResult("natGateway", "Nat Gateway", gwId)
 	// tag the gateway
-	_, err = TagResource(ctx, gwId, CreateTag("Name", "KhatangaNatGateway"))
+	_, err = TagResource(ctx, gwId, CreateTag("Name", util.Config.NatGateway.Name))
 	// the gateway takes time to start run a function to test if this is up yet.
-
 	gwIds := []*string{gwId}
 	dNatGwI := ec2.DescribeNatGatewaysInput{
 		NatGatewayIds: gwIds,

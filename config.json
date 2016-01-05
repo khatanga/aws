@@ -1,0 +1,32 @@
+{
+	"SessionRegion": "us-west-2b",
+	"Vpc":{
+		"DryRun": false,
+		"CidrBlock": "10.2.0.0/16",
+		"InstanceTenancy": "default",
+		"TagName": "KhatangaVPC"
+	},
+	"PubSubnet":{
+		"AvailabilityZone": "us-west-2b",
+		"CidrBlock": "10.2.0.0/20",
+		"DryRun": false,
+		"VpcId": "vpc",
+		"TagName": "KhatangaPublic"
+	},
+	"PvtSubnet":{
+		"AvailabilityZone": "us-west-2b",
+		"CidrBlock": "10.2.16.0/20",
+		"DryRun": false,
+		"VpcId": "vpc",
+		"TagName": "KhatangaPrivate"
+	},
+	"InetGateway":{
+		"Name": "KhatangaGateway"
+	},
+	"NatGateway":{
+		"Name": "KhatangaNatGateway"
+	},
+	"NatEip":{
+		"Name": "KhatangaNatGatewayEip"
+	}
+}

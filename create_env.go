@@ -15,6 +15,9 @@ import (
 // Creates aws environment for Khatanga project
 func main() {
 	log.Info("Starting AWS Client")
+	
+	//read config.json
+	util.Initialize()
 
 	// set up all the command line flag variables
 	var fAll, fVpc, fSubnets, fInternetGw, fNatEip, fNatGw bool
@@ -30,7 +33,7 @@ func main() {
 
 	// create an awsContext that stores the session and results from function calls
 	// for example ids of created vpc
-	session := session.New(&aws.Config{Region: aws.String("us-west-2")})
+	session := session.New(&aws.Config{Region: aws.String(util.Config.SessionRegion)})
 	token := aws.String(feeds.NewUUID().String())
 	ctx := util.NewAwsContext(session)
 	// token for retry logic
