@@ -19,8 +19,9 @@ func main() {
 	//read config.json
 	util.Initialize()
 
+	// set up all the command line flag variables
 	var fAll, fVpc, fSubnets, fInternetGw, fNatEip, fNatGw bool
-	
+
 	flag.BoolVar(&fAll, "createAll", false, "Special flag to execute all create statements")
 	flag.BoolVar(&fVpc, "createVpc", false, "Create Virtual Private Cloud (VPC) for environment")
 	flag.BoolVar(&fSubnets, "createSubnets", false, "Create private and public Subnets in VPC")

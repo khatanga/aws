@@ -128,8 +128,7 @@ func CreateNatEip(ctx *util.AwsContext) error {
 	}
 	ctx.AddResult("natEip", "ElasticIp", aEipO.AllocationId)
 	// tag the ip
-	_, err = TagResource(ctx, aEipO.AllocationId, CreateTag("Name", util.Config.NatEip.Name))
-	return err
+	return nil
 }
 
 func CreateNATGateway(ctx *util.AwsContext) error {
@@ -156,6 +155,9 @@ func CreateNATGateway(ctx *util.AwsContext) error {
 	dNatGwI := ec2.DescribeNatGatewaysInput{
 		NatGatewayIds: gwIds,
 	}
+
+	util.WaitForNatGateway(&dNatGwI, svc)
+
 	dNatGwO, err := svc.DescribeNatGateways(&dNatGwI)
 	log.WithField("NatGwState", dNatGwO.NatGateways[0].State).Info("NatGateway state")
 	return err
